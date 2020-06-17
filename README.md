@@ -6,10 +6,11 @@ Contributed by Chen Gao, [Yunpeng Chen](https://cypw.github.io/), [Si Liu](https
 ## Introduction
 We propose a novel AdversarialNAS method, which is the first gradient-based fully differentiable NAS method in GAN field and achieves state-of-art performance with much higher efficiency. We also design a large architecture search space for GAN and make it feasible to search in.
 
-<img src="imgs/fig-cell.png" alt="nas-gan">
+<img src="imgs/fig-cell.png" alt="nas-gan", width="50%">
 
 ## Architecture search snapshots
 <img src="imgs/snapshot_examples/G.gif" alt="G">
+
 <img src="imgs/snapshot_examples/D.gif" alt="D">
 
 ## Checklist
@@ -26,6 +27,7 @@ We propose a novel AdversarialNAS method, which is the first gradient-based full
     ~~~
     git clone https://github.com/chengaopro/AdversarialNAS.git
     ~~~
+   
 2. Install pytorch 1.1.0, tensorflow 1.9.0, CUDA 9.0 and corresponding CUDNN via conda.
 
     ~~~
@@ -35,6 +37,7 @@ We propose a novel AdversarialNAS method, which is the first gradient-based full
     ~~~
     conda install tensorflow-gpu==1.9.0 cudnn
     ~~~
+   
 3. Install the requirements via pip.
     
     ~~~
@@ -83,12 +86,6 @@ Coming soon.
     ~~~
     sh scripts/test_arch_stl10.sh
     ~~~
-
-
-
-
-
-
 
 ## Citation
 Please consider citing our paper in your publications if it helps your research. The following is a BibTeX reference. The BibTeX entry requires the url LaTeX package.
