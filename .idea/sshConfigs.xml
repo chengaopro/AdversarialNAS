@@ -3,6 +3,7 @@
   <component name="SshConfigs">
     <configs>
       <sshConfig authType="PASSWORD" host="localhost" id="e45c9002-2f9f-4ca6-a703-b0f695509478" port="7794" customName="gc@localhost:94" nameFormat="CUSTOM" />
+      <sshConfig authType="PASSWORD" host="localhost" id="165f7769-a45b-436b-b7af-a5211b30e20f" port="7794" customName="gc@localhost:94" nameFormat="CUSTOM" />
     </configs>
   </component>
 </project>
