@@ -46,7 +46,7 @@ We propose a novel **AdversarialNAS** method, which is the **first gradient-base
 
 ### Preparing necessary files
 
-Files can be found in [Google Drive](https://drive.google.com/drive/folders/17Kqc5aImZ2vHJ1SH1HkrHjlk0MZeuM6q?usp=sharing) and [Baidu drive (passcode: bk1m)](https://pan.baidu.com/s/1_1K6mqKxGj3_TBbJcSUE-Q).
+Files can be found in [Google Drive](https://drive.google.com/drive/folders/17Kqc5aImZ2vHJ1SH1HkrHjlk0MZeuM6q?usp=sharing) and [Baidu Drive (passcode: bk1m)](https://pan.baidu.com/s/1_1K6mqKxGj3_TBbJcSUE-Q).
 1. Download the two trained generative models to ./exps/arch_train_cifar10/Model and ./exps/arch_train_stl10/Model respectively.
 
     ~~~
