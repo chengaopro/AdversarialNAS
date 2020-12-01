@@ -45,19 +45,21 @@ We propose a novel **AdversarialNAS** method, which is the **first gradient-base
     ~~~
 
 ### Preparing necessary files
-1. Download the two trained generative models ([Baidu drive, passcode: bk1m](https://pan.baidu.com/s/1_1K6mqKxGj3_TBbJcSUE-Q)) to ./exps/arch_train_cifar10/Model and ./exps/arch_train_stl10/Model respectively.
+
+Files can be found in [Google Drive](https://drive.google.com/drive/folders/17Kqc5aImZ2vHJ1SH1HkrHjlk0MZeuM6q?usp=sharing) and [Baidu drive (passcode: bk1m)](https://pan.baidu.com/s/1_1K6mqKxGj3_TBbJcSUE-Q).
+1. Download the two trained generative models to ./exps/arch_train_cifar10/Model and ./exps/arch_train_stl10/Model respectively.
 
     ~~~
     mkdir -p exps/arch_train_cifar10/Model exps/arch_train_stl10/Model 
     ~~~
    
-2. Download the pre-calculated statistics ([Baidu drive, passcode: bk1m](https://pan.baidu.com/s/1_1K6mqKxGj3_TBbJcSUE-Q)) to ./fid_stat for calculating the FID.
+2. Download the pre-calculated statistics to ./fid_stat for calculating the FID.
     
     ~~~
     mkdir fid_stat
     ~~~
    
-3. Download the inception model ([Baidu drive, passcode: bk1m](https://pan.baidu.com/s/1_1K6mqKxGj3_TBbJcSUE-Q)) to ./tmp for calculating the IS and FID.
+3. Download the inception model to ./tmp for calculating the IS and FID.
     
     ~~~
     mkdir tmp
