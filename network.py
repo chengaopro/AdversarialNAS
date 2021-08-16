@@ -3,6 +3,7 @@
 
 import os
 import numpy as np
+import math
 import torch
 import torch.nn as nn
 from torchvision.utils import make_grid
@@ -13,13 +14,14 @@ import logging
 
 from utils.inception_score import get_inception_score
 from utils.fid_score import calculate_fid_given_paths
+from utils.genotype import alpha2genotype, beta2genotype, draw_graph_D, draw_graph_G
 
 
 logger = logging.getLogger(__name__)
 
 
-def train(args, gen_net: nn.Module, dis_net: nn.Module, gen_optimizer, dis_optimizer,
-          gen_avg_param, train_loader, epoch, writer_dict, schedulers=None, architect=None):
+def train(args, gen_net: nn.Module, dis_net: nn.Module, gen_optimizer, dis_optimizer, gen_avg_param, train_loader, epoch,
+          writer_dict, lr_schedulers, architect_gen=None, architect_dis=None):
     writer = writer_dict['writer']
     gen_step = 0
 
@@ -31,17 +33,27 @@ def train(args, gen_net: nn.Module, dis_net: nn.Module, gen_optimizer, dis_optim
         global_steps = writer_dict['train_global_steps']
 
         real_imgs = imgs.type(torch.cuda.FloatTensor)
+        real_imgs_w = real_imgs[:imgs.shape[0] // 2]
+        real_imgs_arch = real_imgs[imgs.shape[0] // 2:]
 
         # sample noise
-        z = torch.cuda.FloatTensor(np.random.normal(0, 1, (imgs.shape[0], args.latent_dim)))
+        z = torch.cuda.FloatTensor(np.random.normal(0, 1, (imgs.shape[0] // 2, args.latent_dim)))
 
-        # train D
+        # search arch of D
+        if architect_dis:
+            # sample noise
+            search_z = torch.cuda.FloatTensor(np.random.normal(0, 1, (imgs.shape[0] // 2, args.latent_dim)))
+            if args.amending_coefficient:
+                architect_dis.step(dis_net, real_imgs_arch, gen_net, search_z, real_imgs_train=real_imgs_w, train_z=z, eta=args.amending_coefficient)
+            else:
+                architect_dis.step(dis_net, real_imgs_arch, gen_net, search_z)
+
+        # train weights of D
         dis_optimizer.zero_grad()
-        real_validity = dis_net(real_imgs)
+        real_validity = dis_net(real_imgs_w)
         fake_imgs = gen_net(z).detach()
-        assert fake_imgs.size() == real_imgs.size()
+        assert fake_imgs.size() == real_imgs_w.size()
         fake_validity = dis_net(fake_imgs)
-
         # Hinge loss
         d_loss = torch.mean(nn.ReLU(inplace=True)(1.0 - real_validity)) + \
                  torch.mean(nn.ReLU(inplace=True)(1 + fake_validity))
@@ -50,25 +62,31 @@ def train(args, gen_net: nn.Module, dis_net: nn.Module, gen_optimizer, dis_optim
 
         writer.add_scalar('d_loss', d_loss.item(), global_steps)
 
+        # sample noise
+        gen_z = torch.cuda.FloatTensor(np.random.normal(0, 1, (args.gen_bs, args.latent_dim)))
+        # search arch of G
+        if architect_gen:
+            if global_steps % args.n_critic == 0:
+                # sample noise
+                search_z = torch.cuda.FloatTensor(np.random.normal(0, 1, (args.gen_bs, args.latent_dim)))
+                if args.amending_coefficient:
+                    architect_gen.step(search_z, gen_net, dis_net, train_z=gen_z, eta=args.amending_coefficient)
+                else:
+                    architect_gen.step(search_z, gen_net, dis_net)
 
-        # train G
+        # train weights of G
         if global_steps % args.n_critic == 0:
             gen_optimizer.zero_grad()
-            
-            # sample noise
-            gen_z = torch.cuda.FloatTensor(np.random.normal(0, 1, (args.gen_bs, args.latent_dim)))
-            
             gen_imgs = gen_net(gen_z)
             fake_validity = dis_net(gen_imgs)
-
             # Hinge loss
             g_loss = -torch.mean(fake_validity)
             g_loss.backward()
             gen_optimizer.step()
 
             # learning rate
-            if schedulers:
-                gen_scheduler, dis_scheduler = schedulers
+            if lr_schedulers:
+                gen_scheduler, dis_scheduler = lr_schedulers
                 g_lr = gen_scheduler.step(global_steps)
                 d_lr = dis_scheduler.step(global_steps)
                 writer.add_scalar('LR/g_lr', g_lr, global_steps)
@@ -88,6 +106,20 @@ def train(args, gen_net: nn.Module, dis_net: nn.Module, gen_optimizer, dis_optim
                 (epoch, args.max_epoch_D, iter_idx % len(train_loader), len(train_loader), d_loss.item(), g_loss.item()))
 
         writer_dict['train_global_steps'] = global_steps + 1
+
+        if architect_gen:
+            # deriving arch of G/D during searching
+            derive_freq_iter = math.floor((args.max_iter_D / args.max_epoch_D) / args.derive_per_epoch)
+            if (args.derive_per_epoch > 0) and (iter_idx % derive_freq_iter == 0):
+                genotype_G = alpha2genotype(gen_net.module.alphas_normal, gen_net.module.alphas_up, save=True,
+                                            file_path=os.path.join(args.path_helper['genotypes_path'], str(epoch)+'_'+str(iter_idx)+'_G.npy'))
+                genotype_D = beta2genotype(dis_net.module.alphas_normal, dis_net.module.alphas_down, save=True,
+                                           file_path=os.path.join(args.path_helper['genotypes_path'], str(epoch)+'_'+str(iter_idx)+'_D.npy'))
+                if args.draw_arch:
+                    draw_graph_G(genotype_G, save=True,
+                                 file_path=os.path.join(args.path_helper['graph_vis_path'], str(epoch)+'_'+str(iter_idx)+'_G'))
+                    draw_graph_D(genotype_D, save=True,
+                                 file_path=os.path.join(args.path_helper['graph_vis_path'], str(epoch)+'_'+str(iter_idx)+'_D'))
 
 
 def validate(args, fixed_z, fid_stat, gen_net: nn.Module, writer_dict):

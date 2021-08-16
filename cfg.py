@@ -30,11 +30,14 @@ def parse_args():
     # train
     parser.add_argument('--arch', type=str, default='arch_cifar10', help='architecture name')
     # parser.add_argument('--arch_D', type=str, help='architecture name of D')
+    parser.add_argument('--genotypes_exp', type=str, help='ues genotypes of the experiment')
+    parser.add_argument('--genotype_name', type=str, default='latest', help='genotype name')
     parser.add_argument('--max_epoch_G', type=int, default=200, help='max number of epoch for training G')
     parser.add_argument('--max_iter_G', type=int, default=None, help='max number of iteration for training G')
+    parser.add_argument('--max_iter_D', type=int, default=None, help='max number of iteration for training D')
     parser.add_argument('--n_critic', type=int, default=1, help='number of training steps for discriminator per iter')
-    parser.add_argument('--gen_bs', type=int, default=64, help='batche size of G')
-    parser.add_argument('--dis_bs', type=int, default=64, help='batche size of D')
+    parser.add_argument('--gen_bs', type=int, default=64, help='batch size of G')
+    parser.add_argument('--dis_bs', type=int, default=64, help='batch size of D')
     parser.add_argument('--gf_dim', type=int, default=256, help='base channel-dim of G')
     parser.add_argument('--df_dim', type=int, default=128, help='base channel-dim of D')
     parser.add_argument('--g_lr', type=float, default=0.0002, help='learning rate for G')
@@ -52,24 +55,24 @@ def parse_args():
     parser.add_argument('--latent_dim', type=int, default=128, help='dimensionality of the latent space')
     
     # val
-    parser.add_argument('--print_freq', type=int, default=50, help='interval between each verbose')
-    parser.add_argument('--val_freq', type=int, default=20, help='interval between each validation')
+    parser.add_argument('--print_freq', type=int, default=50, help='frequency of verbose')
+    parser.add_argument('--val_freq', type=int, default=20, help='frequency of validation')
     parser.add_argument('--num_eval_imgs', type=int, default=50000)
     parser.add_argument('--eval_batch_size', type=int, default=100)
 
     # search
-    parser.add_argument('--derived_start_epoch', type=int, default=0, help='')
-    parser.add_argument('--derived_max_epoch', type=int, default=None, help='')
-    parser.add_argument('--derived_epoch_interval', type=int, default=None, help='')
+    parser.add_argument('--gumbel_softmax', type=str2bool, default=False, help='use gumbel softmax or not')
+    parser.add_argument('--derive_freq', type=int, default=1, help='frequency (epoch) of deriving arch')
+    parser.add_argument('--derive_per_epoch', type=int, default=0, help='number of deriving per epoch')
     parser.add_argument('--tau_max', type=float, default=5, help='max tau for gumbel softmax')
     parser.add_argument('--tau_min', type=float, default=0.1, help='min tau for gumbel softmax')
-    parser.add_argument('--gumbel_softmax', type=str2bool, default=False, help='use gumbel softmax or not')
-    parser.add_argument('--amending_coefficient', type=float, default=0.1, help='')
-    parser.add_argument('--derive_freq', type=int, default=1, help='')
-    parser.add_argument('--derive_per_epoch', type=int, default=0, help='number of derive per epoch')
+    parser.add_argument('--amending_coefficient', type=float, default=0, help='coeff of Amended Gradient Estimation trick')
     parser.add_argument('--draw_arch', type=str2bool, default=True, help='visualize the searched architecture or not')
     parser.add_argument('--early_stop', type=str2bool, default=False, help='use early stop strategy or not')
-    parser.add_argument('--genotypes_exp', type=str, help='ues genotypes of the experiment')
+
+    # parser.add_argument('--derived_start_epoch', type=int, default=0, help='')
+    # parser.add_argument('--derived_max_epoch', type=int, default=None, help='')
+    # parser.add_argument('--derived_epoch_interval', type=int, default=None, help='')
 
     opt = parser.parse_args()
 
