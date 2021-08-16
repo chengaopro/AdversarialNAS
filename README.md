@@ -18,7 +18,7 @@ We propose a novel **AdversarialNAS** method, which is the **first gradient-base
 - [x] Re-trained generative models on CIFAR-10 and STL-10.
 - [x] Inference codes for evaluation.
 - [x] Training codes for the searched architectures.
-- [ ] Searching codes.
+- [x] Searching codes.
 
 ## Getting Started
 ### Installation
@@ -47,11 +47,6 @@ We propose a novel **AdversarialNAS** method, which is the **first gradient-base
 ### Preparing necessary files
 
 Files can be found in [Google Drive](https://drive.google.com/drive/folders/17Kqc5aImZ2vHJ1SH1HkrHjlk0MZeuM6q?usp=sharing) and [Baidu Drive (passcode: bk1m)](https://pan.baidu.com/s/1_1K6mqKxGj3_TBbJcSUE-Q).
-1. Download the two trained generative models to ./exps/arch_train_cifar10/Model and ./exps/arch_train_stl10/Model respectively.
-
-    ~~~
-    mkdir -p exps/arch_train_cifar10/Model exps/arch_train_stl10/Model 
-    ~~~
    
 2. Download the pre-calculated statistics to ./fid_stat for calculating the FID.
     
@@ -66,7 +61,11 @@ Files can be found in [Google Drive](https://drive.google.com/drive/folders/17Kq
     ~~~
    
 ## Search
-Coming soon.
+New features
+- [x] Better performance
+- [ ] Supporting [Amended Gradient Estimation](https://arxiv.org/pdf/1910.11831.pdf)
+
+
 ## Train and Test the searched architecture.
 ### Training
 1. Train the weights of generative model with the searched architecture (the architecture is saved in ./exps/arch_cifar10/Genotypes/latest_G.npy)
@@ -80,6 +79,12 @@ Coming soon.
     ~~~
    
 ### Testing
+1. Download the two trained generative models ([Google Drive](https://drive.google.com/drive/folders/17Kqc5aImZ2vHJ1SH1HkrHjlk0MZeuM6q?usp=sharing) and [Baidu Drive (passcode: bk1m)](https://pan.baidu.com/s/1_1K6mqKxGj3_TBbJcSUE-Q)) to ./exps/arch_train_cifar10/Model and ./exps/arch_train_stl10/Model respectively.
+
+    ~~~
+    mkdir -p exps/arch_train_cifar10/Model exps/arch_train_stl10/Model 
+    ~~~
+   
 2. Test the trained model
     ~~~
     sh scripts/test_arch_cifar10.sh
