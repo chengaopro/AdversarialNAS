@@ -6,7 +6,7 @@ Contributed by [Chen Gao](https://chengaopro.github.io/), [Yunpeng Chen](https:/
 ## Introduction
 We propose a novel **AdversarialNAS** method, which is the **first gradient-based fully differentiable NAS method in GAN field** and achieves state-of-art performance with much higher efficiency. We also design a large architecture search space for GAN and make it feasible to search in.
 
-<img src="imgs/fig-cell.png" alt="nas-gan" width="200" height="103">
+<img src="imgs/fig-cell.png" alt="nas-gan" width="400" height="206">
 
 ## Architecture search snapshots
 <img src="imgs/snapshot_examples/G.gif" alt="G">
